@@ -36,6 +36,7 @@ public class Client extends Thread {
                         "| 4 - Possui oculos              |\n" +
                         "| 5 - Possui chapeu              |\n" +
                         "| 6 - Sexo                       |\n" +
+                        "| 7 - Palpite                    |\n" +
                         "| sair - Sair do jogo            |");
         System.out.println("+--------------------------------+\n\n");
         System.out.print("Digite a mensagem (ou 'sair' para encerrar): ");
@@ -105,7 +106,10 @@ public class Client extends Thread {
                         String channelDesc = Communicator.readString(buf).trim();
 
                         System.out.println("Recebi nova mensagem: " + msg + channelDesc);
-                        // worker.newJob(jobId, jobDesc);
+                        if(channelDesc == "Limite de conexoes atingido.")
+                        {
+                            running = false;
+                        }
                         break;
                     default:
                         // Caso contrário, exibe uma mensagem informando que uma mensagem desconhecida

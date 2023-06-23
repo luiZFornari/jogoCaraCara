@@ -78,7 +78,7 @@ public class Server extends Thread {
                                 System.out.println("Recebi nova mensagem: " + this.vetorClientes.get(i).nome);
                                 channelDesc = Communicator.readString(buf).trim();
                                 System.out.println("Pergunta: " + channelDesc);
-
+                                
                                 String vet[] = channelDesc.split(":");
 
                                 switch (vet[0]) {
@@ -136,6 +136,7 @@ public class Server extends Thread {
                                         break;
 
                                 }
+                                System.out.println(this.vetorClientes.get(i).getCara().getNome());
 
                                 comm_server.sendMsgNewJOB(
                                         Communicator.clientSocketList.get(this.vetorClientes.get(i).ip),
@@ -153,6 +154,8 @@ public class Server extends Thread {
                             resposta = "Limite de conexoes atingido.";
                             comm_server.sendMsgNewJOB(Communicator.clientSocketList.get(workerId), channelDesc,
                                     resposta);
+
+                                    
                         } else {
 
                             System.out.println(workerId);
@@ -179,16 +182,26 @@ public class Server extends Thread {
 
                         for (int i = 0; i < this.vetorClientes.size(); i++) {
                             if (this.vetorClientes.get(i).nome.equals(workerId)) {
-                                if (this.vetorClientes.get(i).cara.getNome() == chute) {
-                                    for (int j = 0; j < this.vetorClientes.size(); j++) {
+                                if (this.vetorClientes.get(i).cara.getNome().equals(chute)) {
+                                
                                         this.vetorClientes.get(i).pontos += 1;
                                         this.vetorClientes.get(i).vitorias++;
 
                                         comm_server.sendMsgNewJOB(
                                                 Communicator.clientSocketList.get(this.vetorClientes.get(i).ip),
-                                                "Parabens voce acertou!! Ganhou +10 pontos ,Voce esta com - "
+                                                "Parabens voce acertou!! Ganhou +1 pontos , Voce esta com - "
                                                         + this.vetorClientes.get(i).pontos,
                                                 " - Uma nova rodada começou");
+
+                                        if(this.vetorClientes.get(i).pontos == 5)
+                                        {
+                                            comm_server.sendMsgNewJOB(
+                                            Communicator.clientSocketList.get(this.vetorClientes.get(i).ip),
+                                            "Parabens voce ganhou!!  - "
+                                                    + this.vetorClientes.get(i).pontos,
+                                            " - Uma nova rodada começou");
+
+                                        }
 
                                         this.vetorClientes.get(i).cara = vetorCaras[random.nextInt(24)];
 
@@ -210,7 +223,7 @@ public class Server extends Thread {
 
                                         }
 
-                                    }
+                                    
 
                                 } else {
 

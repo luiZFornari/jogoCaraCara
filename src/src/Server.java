@@ -140,7 +140,7 @@ public class Server extends Thread {
 
                                 comm_server.sendMsgNewJOB(
                                         Communicator.clientSocketList.get(this.vetorClientes.get(i).ip),
-                                        "Resposta: ",
+                                        " -  ",
                                         resposta);
                             }
 
@@ -168,7 +168,7 @@ public class Server extends Thread {
 
                             this.vetorClientes.add(cliente);
 
-                            resposta = "Bem vindo ao jogo! ";
+                            resposta = "   -- Bem vindo ao jogo! ";
 
                             comm_server.sendMsgNewJOB(Communicator.clientSocketList.get(workerId), channelDesc,
                                     resposta);
@@ -179,7 +179,7 @@ public class Server extends Thread {
                         workerId = Communicator.readString(buf).trim();
                         System.out.println("O usuario : " + workerId + " tentou acertar a cara.");
                         String chute = Communicator.readString(buf).trim();
-
+                        System.out.println(chute);
                         for (int i = 0; i < this.vetorClientes.size(); i++) {
                             if (this.vetorClientes.get(i).nome.equals(workerId)) {
                                 if (this.vetorClientes.get(i).cara.getNome().equals(chute)) {
@@ -199,29 +199,28 @@ public class Server extends Thread {
                                             Communicator.clientSocketList.get(this.vetorClientes.get(i).ip),
                                             "Parabens voce ganhou!!  - "
                                                     + this.vetorClientes.get(i).pontos,
-                                            " - Uma nova rodada começou");
+                                            " - Uma novo jogo começou");
+
+                                            this.vetorClientes.get(i).pontos = 0;
 
                                         }
 
                                         this.vetorClientes.get(i).cara = vetorCaras[random.nextInt(24)];
 
-                                        if (i == 0) {
-                                            comm_server.sendMsgNewJOB(
-                                                    Communicator.clientSocketList.get(this.vetorClientes.get(0).ip),
+                                        for (int j = 0; j < this.vetorClientes.size(); j++) {
+                                            if (j!=i) {
+                                                comm_server.sendMsgNewJOB(
+                                                    Communicator.clientSocketList.get(this.vetorClientes.get(j).ip),
                                                     "Voce perdeu !! ",
-                                                    "Voce esta com " + this.vetorClientes.get(0).pontos);
+                                                    "Voce esta com " + this.vetorClientes.get(j).pontos);
 
-                                            this.vetorClientes.get(i).derrotas++;
-                                            this.vetorClientes.get(0).cara = vetorCaras[random.nextInt(24)];
-                                        } else {
-                                            comm_server.sendMsgNewJOB(
-                                                    Communicator.clientSocketList.get(this.vetorClientes.get(1).ip),
-                                                    "Voce perdeu !! Voce esta com " + this.vetorClientes.get(1).pontos,
-                                                    "Nova rodada começou");
-                                            this.vetorClientes.get(i).derrotas++;
-                                            this.vetorClientes.get(1).cara = vetorCaras[random.nextInt(24)];
-
-                                        }
+                                            this.vetorClientes.get(j).derrotas++;
+                                            this.vetorClientes.get(j).cara = vetorCaras[random.nextInt(24)];
+                                            this.vetorClientes.get(j).pontos = 0;
+                                                
+                                            }
+                                            
+                                        }                                        
 
                                     
 
@@ -235,31 +234,36 @@ public class Server extends Thread {
 
                                     this.vetorClientes.get(i).cara = vetorCaras[random.nextInt(24)];
 
-                                    if (i == 0) {
-                                        this.vetorClientes.get(0).pontos += 1;
-                                        this.vetorClientes.get(0).vitorias++;
+                                    for (int j = 0; j < this.vetorClientes.size(); j++) {
+                                        if (j!=i) {
+                                        this.vetorClientes.get(j).pontos += 1;
+                                        this.vetorClientes.get(j).vitorias++;
                                         comm_server.sendMsgNewJOB(
-                                                Communicator.clientSocketList.get(this.vetorClientes.get(0).ip),
-                                                "\"Parabens voce acertou!! ",
-                                                "Voce esta com " + this.vetorClientes.get(0).pontos);
+                                                Communicator.clientSocketList.get(this.vetorClientes.get(j).ip),
+                                                "\"Parabens voce ganhou a rodada!! ",
+                                                "Voce esta com " + this.vetorClientes.get(j).pontos);
 
-                                        this.vetorClientes.get(i).derrotas++;
+                                        if(this.vetorClientes.get(j).pontos == 5)
+                                        {
+                                            comm_server.sendMsgNewJOB(
+                                            Communicator.clientSocketList.get(this.vetorClientes.get(j).ip),
+                                            "Parabens voce ganhou!!  - "
+                                                    + this.vetorClientes.get(i).pontos,
+                                            " - Uma novo jogo começou");
+
+                                            this.vetorClientes.get(0).pontos = 0;
+                                            this.vetorClientes.get(1).pontos = 0;
+
+
+                                        }
+
                                         this.vetorClientes.get(0).cara = vetorCaras[random.nextInt(24)];
-                                    } else {
-                                        this.vetorClientes.get(1).pontos += 1;
-                                        this.vetorClientes.get(1).vitorias++;
-                                        comm_server.sendMsgNewJOB(
-                                                Communicator.clientSocketList.get(this.vetorClientes.get(1).ip),
-                                                "Parabens voce acertou!! Voce esta com "
-                                                        + this.vetorClientes.get(1).pontos,
-                                                "Nova rodada começou");
-                                        this.vetorClientes.get(i).derrotas++;
                                         this.vetorClientes.get(1).cara = vetorCaras[random.nextInt(24)];
 
-                                    }
 
                                 }
-
+                            }
+                            }
                             }
 
                         }

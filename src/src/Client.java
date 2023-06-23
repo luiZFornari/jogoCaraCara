@@ -45,7 +45,7 @@ public class Client extends Thread {
     public Client(String launcherChannelDesc) {
         try {
             // Define o endereço do canal do lançador do cliente como "127.0.0.1:5000"
-            this.launcherChannelDesc = "127.0.0.1:5000";
+            this.launcherChannelDesc = "172.16.221.121:5000";
 
             // Aguarda 1 segundo antes de continuar a execução
             Thread.sleep(1000);
@@ -180,23 +180,31 @@ public class Client extends Thread {
                             case 7:
                                 System.out.print("Digite o nome do seu palpite\n");
                                 escolha = scanner.next();
-                                this.launcherChannelSend.sendMsgNewCHUTE(launcherChannelSend.getSocket(),
-                                        nomeuser,
-                                        escolha);
+                                opcao =  escolha;
                                 break;
                             default:
                                 System.out.println("Escolha inválida!\n");
                                 opcao = scanner.nextLine();
 
                         }
-                    } while (numswitch <= 0 && numswitch >= 7);
+                    } while (numswitch <= 0 && numswitch >= 8);
                     // leitor.close();
                     // Enviar a mensagem para o servidor
-                    message = opcao;
+
+                    if (numswitch == 7) {
+                        message = opcao;
+                        this.launcherChannelSend.sendMsgNewCHUTE(launcherChannelSend.getSocket(),
+                        nomeuser,
+                        opcao);
+                    } else {
+                        message = opcao;
                     this.launcherChannelSend.sendMsgNewWorker(launcherChannelSend.getSocket(),
                             nomeuser,
                             message);
                     System.out.println("Mensagem enviada: " + message);
+                    }
+
+                    
                 }
 
             }
